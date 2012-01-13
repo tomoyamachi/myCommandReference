@@ -1,0 +1,93 @@
+<a href="http://www.cs.rutgers.edu/LCSR-Computing/some-docs/emacs-chart.html">Emacs Command Summary</a>
+
+dired mode
+
+上の階層へ ー ^
+上下 ー n p
+
+新しいディレクトリをつくる ー +
+ファイル移動、リネーム ー R
+Viewモードで見る ー v
+
+マークをつける ー m
+マークをはずす ー u
+削除 ー D
+コピー ー C
+
+デリートマーク ー d
+削除 ー x
+
+
+<a href="http://www.bookshelf.jp/soft/meadow_25.html">Meadow/Emacs memo: ディレクトリ表示 ― dired など</a>
+<a href="http://www.bookshelf.jp/texi/emacs-20.6-man-jp/emacs_29.html">GNU Emacsマニュアル: ディレクトリエディタdired</a>
+
+replace-regex
+test\([0-9]*\) -> パースした部分は、\1にはいっている
+
+Rectangle
+
+「C-x r」で矩形処理が可能に。
+k - kill
+y - yank
+o - スペースを挿入
+M-x delete-whitespace-rectangle
+
+<a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Rectangles.html">Rectangles - GNU Emacs Manual</a>
+
+
+Rinari <a href="http://cheat.errtheblog.com/s/rinari/">$ cheat rinari</a>
+Moving around in Rinari:
+
+	C-c ; f c	rinari-find-controller
+	C-c ; f e	rinari-find-environment
+	C-c ; f f	rinari-find-file-in-project
+	C-c ; f h	rinari-find-helper
+	C-c ; f i	rinari-find-migration
+	C-c ; f j	rinari-find-javascript
+	C-c ; f l	rinari-find-plugin
+	C-c ; f m	rinari-find-model
+	C-c ; f n	rinari-find-configuration
+	C-c ; f o	rinari-find-log
+	C-c ; f p	rinari-find-public
+	C-c ; f r	rinari-find-rspec
+	C-c ; f s	rinari-find-script
+	C-c ; f t	rinari-find-test
+	C-c ; f v	rinari-find-view
+	C-c ; f w	rinari-find-worker
+	C-c ; f x	rinari-find-fixture
+	C-c ; f y	rinari-find-stylesheet
+
+Actions in Rinari:
+
+	C-c ; c         rinari-console
+	C-c ; e         rinari-insert-erb-skeleton
+	C-c ; f         Prefix Command
+	C-c ; g         rinari-rgrep
+	C-c ; q         rinari-sql
+	C-c ; r         rinari-rake
+	C-c ; s         rinari-script
+	C-c ; t         rinari-test
+	C-c ; w         rinari-web-server
+	C-c ; x         rinari-extract-partial
+
+
+*移動
+・ C-f     (forward-char)          1文字進む              (→)
+ ・ C-b     (backward-char)         1文字戻る              (←)
+ ・ C-n     (next-line)             次の (= next) 行へ     (↓)
+ ・ C-p     (previous-line)         前の (= previous) 行へ (↑)
+ ・ M-f     (forward-word)          1語進む
+ ・ M-b     (backward-word)         1語戻る
+ ・ C-e     (end-of-line)           行末へ
+ ・ C-a     (beginning-of-line)     行頭へ
+ ・ M-e     (forward-sentence)      文末へ
+ ・ M-a     (backward-sentence)     文頭へ
+ ・ M->     (end-of-buffer)         現在位置をマークしバッファ末尾へ
+ ・ M-<     (beginning-of-buffer)   現在位置をマークしバッファ先頭へ
+ ・ C-v     (scroll-up)             1画面分進む
+ ・ M-v     (scroll-down)           1画面分戻る
+ ・ C-x L   (goto-line)             指定した行へ移動...
+ ・ C-l     (recenter)              カーソルが画面中央にくるようにする
+
+
+

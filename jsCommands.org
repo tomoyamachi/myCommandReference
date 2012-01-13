@@ -1,0 +1,44 @@
+* swank-jsを使って、replっぽく使う。
+<a href="http://e-arrows.sakura.ne.jp/javascript/">八発白中: JavaScriptアーカイブ</a>のとおり。
+
+** 導入
+0. あらかじめ適当なディレクトリにクローンしてください。
+
+$ cd ~/Programs/utils/
+$ git clone git://github.com/fukamachi/swank-js
+
+　1. node.js、npmをインストールします。
+
+$ brew install node
+$ curl http://npmjs.org/install.sh | sh
+
+　2. Socket.ioをインストールします。
+
+$ npm install socket.io
+
+　3. SLIMEをインストールします。ダウンロードしてload-pathの通ったところに置くだけです。
+
+　4. slime-js.elのシンボリックリンクをSLIMEのcontrib/に置きます
+
+$ ln -s ~/Programs/utils/swank-js/slime-js.el ~/.emacs.d/elisp/slime/contrib/
+
+　5. .emacsに設定を追記します。
+
+(require 'slime)
+(slime-setup '(slime-repl slime-fancy slime-banner slime-js))
+
+(global-set-key [f5] 'slime-js-reload)
+(add-hook 'js2-mode-hook
+          (lambda ()
+            (slime-js-minor-mode 1)))
+
+** 使いかた
+導入がすんだら、
+locate swank-js で、swank.jsの場所を探し、
+node swank.js でswank.jsを起動。
+M-x slime-connect 127.0.0.1:4005
+につなぐと、完了。
+
+jsファイルから、C-c C-cをつかうと、評価される。
+
+*

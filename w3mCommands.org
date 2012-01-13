@@ -1,0 +1,160 @@
+* session,
+g  -  ミニバッファで URL の入力をうながして、emacs-w3m にそのページを表示させ ることができます (ポイントの位置とは無関係です)。このキーの割り当ては、 すでに Gnus や Mew を利用している人にはおなじみでしょ う (w3m-goto-url)。
+
+G  -  ミニバッファで URL の入力をうながして、それを新しいセッションで表示しま す。これはちょうど g (M-x w3m-goto-url) のように動作しま すが、新しいセッションを開くところが違います。文字端末で emacs-w3m を使っ ているのでない限り、新しいセッションを開くということは、そのページを新し いタブで表示することを意味します。
+タブについてのもっと詳しいことは、 3.5 みんなタブが好きだよね を参照してください (w3m-goto-url-new-session)。
+
+c (Lynx-like キーマップ)
+y (Info-like キーマップ)
+    表示しているページの URL をエコーエリアに表示するとともに、 kill-ring に URL を挿入します (w3m-print-current-url)。
+
+u (Lynx-like キーマップ)
+Y (Info-like キーマップ)
+    現在位置のリンクが指し示す対象の URL をエコーエリアに表示するとともに、 kill-ring に URL を挿入します (w3m-print-this-url)。
+R
+C-S-l (Info-like キーマップのみ)
+    ページを読み込み直します (w3m-reload-this-page)。
+
+
+* ページ内の移動
+SPC    下に向かってスクロールします。`more' や `less' コマンド、ある いは Emacs の view-mode を使ったことがあれば、覚えるまでもないキー ですよね (w3m-scroll-up-or-next-url)。
+
+DEL
+b
+backspace
+S-SPC
+C-?    上に向かってスクロールします。`less' コマンド や Emacs の view-mode に馴れ親しんでいるあなたの手は、自然にこの キーを叩くでしょう (w3m-scroll-down-or-previous-url)。
+>  -  左にスクロールします。スクロールの量 は w3m-horizontal-scroll-columns で与え、デフォルト値は 10 で す (w3m-scroll-left)。
+<  -  右にスクロールします。スクロールの量 は w3m-horizontal-scroll-columns で与え、デフォルト値は 10 で す (w3m-scroll-right)。
+
+   . (Lynx-like キーマップ)
+   S-left (Info-like キーマップ)   左にシフトします (小刻みな水平スクロール)。シフトの量 は w3m-horizontal-shift-columns で与え、デフォルト値は 2 で す (w3m-shift-left)。
+
+* リンク、フォームへの移動
+TAB
+down (Lynx-like キーマップのみ)
+    次のリンク (emacs-w3m の用語では "アンカー") へポイントを移動します。 より厳密には、順方向で最も近いアンカーへ移動します。
+
+M-TAB
+S-TAB
+backtab
+up (Lynx-like キーマップのみ)
+    前のアンカーへポイントを移動します。より厳密には、逆方向で最も近いアンカー へ移動します (w3m-previous-anchor)。
+
+]  -  次のフォームへポイントを移動します。より厳密には、順方向で最も近いフォー ムへ移動します (w3m-next-form)。
+[  -  前のフォームへポイントを移動します。より厳密には、逆方向で最も近いフォー ムへ移動します (w3m-previous-form)。
+}  -   次の画像へポイントを移動します。より厳密には、順方向で最も近い画像へ移動 します (w3m-next-image)。
+{  -   前の画像へポイントを移動します。より厳密には、逆方向で最も近い画像へ移動 します (w3m-previous-image)。
+C-c C-c
+    現在位置のフォームに記入したものを送り出します (w3m-submit-form)。
+
+RET
+    現在位置にあるのフォーム値を書き換えます。
+
+RET (w3m-form-*-keymap)
+    その値を選択します。
+
+C-c C-q (w3m-form-*-keymap)
+    フォームの編集を中断して、変更を取り止めます。
+
+
+
+
+*  ページ移動
+B (Lynx-like キーマップ)
+left (Lynx-like キーマップ)
+l, p (Info-like キーマップ)
+    以前に訪問したページの履歴を１ページ戻りま す (w3m-view-previous-page)。数の引数 N が与えられると N ページ戻 ります。これは過去に戻るためのお勧めの方法です。
+
+
+N (Lynx-like キーマップ)
+n (Info-like キーマップ) -  以前に訪問したページの履歴を１ページ進みます (w3m-view-next-page)。 もちろん B(`Info-like' キーマップの場合は l) で履歴を 戻った後でなければ働きません。数の引数 N が与えられると N ページ進みます。 このコマンドは、まさに back to the future を実現します!
+
+H  -  ホームページへ移動します (w3m-gohome)。ホームページ の URL は w3m-home-page という変数で指定しま す (see 節 5. デフォルトのままでも結構良いと思うけれど)。w3m-home-page のデフォルト の値は "about:" です。
+
+以下のコマンドは、他には無い emacs-w3m の特長です。私たちはそれらの特許 を得ることができました。従って、他のいかなる場所でも見つからないでしょう。 そのため、今日それらを使うことを学ばなければなりません! (真に受けないで くださいね。ただの冗談ですから。)
+
+SPC   -    現在のポイント位置がバッファの末尾付近にあり、下方向にスクロールできない 場合に SPC を押すと「次」のページへ移動しま す (w3m-scroll-up-or-next-url)。ここで「次のページ」とは、現在読 んでいるページのヘッダ内の特別な "next" フィールドが指し示しているペー ジのことです。この機能は訪問したページの履歴とは関係ありません。
+
+
+DEL, b, backspace, S-SPC, C-?  -    ポイント位置がバッファの先頭付近にあり、上方向にスクロールできない場合 に DEL を押すと、「前」のページへ移動しま す (w3m-scroll-down-or-previous-url)。ここで「前」のページとは、 現在表示されているページのヘッダ内の "prev" あるいは "previous" フィー ルドに指定されているページのことです。この機能は訪問したページの履歴とは 関係ありません。SPC (w3m-scroll-up-or-next-url) と同 様、ただし逆の動きになります。
+
+*  履歴
+s (Lynx-like キーマップ)
+C-u s (Lynx-like キーマップ)
+o (Info-like キーマップ)
+C-u o (Info-like キーマップ)
+    このセッションにおいて訪問した URLs のリストを表示します。接頭引数付きで 呼ばれると (後述)、代わりに arrived URLs を表示しま す (w3m-history)。
+
+
+C-c C-@
+C-c C-SPC
+    そのページの中のカーソルの位置を履歴に記録します。
+
+
+C-c C-v
+    現在表示しているページにおい て、C-c C-@ (w3m-history-store-position) で記憶した位 置へ移動します。
+
+*  ブックマーク
+a
+    現在のページをブックマークに加えます。接頭引数付きで呼ばれた場合は、加え る URL の入力が求められます (w3m-bookmark-add-current-url)。
+
+
+M-a
+    現在位置の URL をブックマークに加えま す (w3m-bookmark-add-this-url)。
+
+v
+    ブックマークのページを呼び出します (w3m-bookmark-view)。
+
+C-k
+    現在位置のブックマークを kill します (w3m-bookmark-kill-entry)。
+
+
+E
+    ブックマーク・ファイルを読み込んで、編集可能な状態にしま す (w3m-bookmark-edit)。
+
+
+C-_
+    やり直しをします (w3m-bookmark-undo)。
+
+
+* バッファ(タブ)の移動
+
+C-c C-w
+    現在の emacs-w3m のバッファを閉じます (w3m-delete-buffer)。
+
+
+C-c M-w
+    現在のもの以外のすべての emacs-w3m のバッファを閉じま す (w3m-delete-other-buffers)。
+
+C-c C-p
+    前の emacs-w3m バッファに移動します。これは通常タブ行において左方向に次 です。数の引数 N を付けて使うと、バッファを N 個分前に移動しま す (w3m-previous-buffer)。
+
+C-c C-n
+    次の emacs-w3m バッファに移動します。これは通常タブ行において右方向に次 です。数の引数 N を付けて使うと、バッファを N 個分次に移動しま す (w3m-next-buffer)。
+
+
+* ページ情報
+\
+    表示中のウェブページを HTML 形式でそのまま表示しま す (w3m-view-source)。
+
+
+=
+    表示中のウェブページの情報を表示します。情報には、タイトル、URL、 ドキュメントタイプ、最終変更日時が含まれます (w3m-view-header)。
+
+
+E (Lynx-like キーマップ)
+e (Info-like キーマップ)
+    現在閲覧中のローカルファイルを編集します (w3m-edit-current-url)。
+
+e (Lynx-like キーマップ)
+E (Info-like キーマップ)
+    現在ポイントの下にあるリンク先のローカルファイルを編集しま す (w3m-edit-this-url)。
+
+
+M
+    (Emacs-w3m 以外の) 外部ブラウザを新たに起動して、現在 emacs-w3m で閲覧し ているページを表示します (w3m-view-url-with-external-browser)。 どの外部ブラウザを使うかは、変数 w3m-content-type-alistによっ て URL の種類毎に定義されます。
+
+
+|
+    ウェブページのソースをコマンドにパイプします。どんなコマンドを使うかを尋 ねられます (w3m-pipe-source)。
