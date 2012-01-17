@@ -1,0 +1,29 @@
+* apacheの設定。
+etc/conf/httpd.confに設定ファイルがある。
+: AllDefaultCharset = utf-8
+に。
+* virtualhostの設定
+conf.d/virtualhost.confに書く。(/conf.dにあるconfファイルは自動的に読み込まれる)
+
+: NameVirtualHost *:80
+: #www以外のサブドメインに来たら、www付きのドメインにリダイレクトする。
+: <VirtualHost *:80>
+:     ServerName   example.com
+:
+:         RewriteEngine On
+:         RewriteCond %{http_host} ^.*example.com
+:         RewriteRule ^(.*) http://www.example.com/$1 [R=301,L]
+: </VirtualHost>
+:
+: <VirtualHost *:80>
+:     ServerName www.example.com
+:     DocumentRoot /var/www/html/example
+:     ServerAdmin root@example.com
+:
+:     <Directory /var/www/html/example>
+:         Options FollowSymLinks ExecCGI
+:         AllowOverride all
+:         Order Allow,Deny
+:         Allow from all
+:     </Directory>
+: </VirtualHost>

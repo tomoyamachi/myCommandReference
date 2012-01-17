@@ -1,0 +1,68 @@
+* emacsからAmazon EC2にtrampで接続するまで
+** EC2への認証鍵を変える
+コマンドと簡単な説明。
+
+今回つかう認証鍵をつくる。
+tomoya@localhost $ ssh-keygen -t rsa
+~/.ssh/に、id_rsa, id_rsa.pubが作られる。
+
+EC2の/home/ec2-user/.ssh/に、つくったid_rsa.pubキーをコピーする。
+あたらしいユーザーを作成。
+scp -i current_key.pem .ssh/id_rsa.pub ec2-user@xxx.com:~/.ssh/
+ssh -i current_key.pem ec2-user@xxx.com:~/.ssh/
+sudo su -
+adduser tomoya
+visudo
+
+visudoであたらしくつくったユーザーの権限を変更。保存。
+tomoya ALL=(ALL) ALL
+
+そのあと、authorized_keyに、id_rsa.pubを設定し、
+ユーザーグループ、パーミッションなどを変える。
+mkdir /home/tomoya/.ssh
+chown -R tomoya:tomoya /home/tomoya
+cd ~/.ssh
+sudo cp /home/ec2-user/id_rsa.pub authorized_key
+chown tomoya:tomoya authorized_key
+chmod 600 authorized_key
+chmod 700 /home/tomoya/.ssh
+
+ec2-userの鍵も変えたいときは
+cd /home/ec2-user/.ssh
+cp authorized_key authorized_key.bak
+cp id_rsa.pub authorized_key
+rm id_rsa.pub
+chown ec2-user:ec2-user authorized_key
+chmod 600 authorized_key
+chmod 700 /home/ec2-user/.ssh
+
+これで、ローカルに新しくつくった、id_rsaで認証することができる。
+
+** trampの設定
+ローカルにもどってからの作業。
+.emacsにtrampをつかえるように設定。
+
+(add-to-list 'load-path "/usr/share/emacs/23.2/lisp/net/")
+(require 'tramp)
+
+** emacsで認証鍵をつかう
+tomoya@localhost $ ssh-agent xterm &
+するとxtermが出てくる。
+このxterm上で、ssh-addコマンドをつかい、先程つくったid_rsaの認証をする。
+tomoya@localhost $ ssh-add
+Enter passphrase for /home/tomoya/.ssh/id_rsa: #作成したときにつかったpassphraseを入力
+Identity added: /home/tomoya/.ssh/id_rsa #認証成功
+tomoya@localhost $ emacs &
+で、emacsを起動する。
+
+これでssh接続のとき、id_rsaがつかわれる。
+C-x C-fで、接続先のファイルをfind fileする。
+Find file: /ssh:tomoya@176.34.59.183:/var/www/html/test.html
+
+これで完了。
+
+参考サイト
+<a href="http://www.gfd-dennou.org/arch/morikawa/memo/ssh-agent.txt">http://www.gfd-dennou.org/arch/morikawa/memo/ssh-agent.txt</a>
+<a href="http://d.hatena.ne.jp/torazuka/20110420/ssh">新規に作成した鍵でEC2インスタンスにSSH接続する - 虎塚</a>
+<a href="http://surf.ml.seikei.ac.jp/~nakano/JMwww/html/sudo/man5/sudoers.5.html">Manpage of sudoers</a>
+<a href="http://dukeiizu.blogspot.com/2011/05/emacs-tramp-sudo.html">デュークのブログ: emacs TRAMP で、リモート・サーバを sudo で接続する</a>
