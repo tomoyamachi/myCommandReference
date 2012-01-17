@@ -6,8 +6,6 @@
 //{{%PRESERVE%
 // ここにコードを入力して下さい
 var local = {};
-plugins.options["site_local_keymap.local_keymap"] = local;
-
 function fake(k, i) function () { key.feed(k, i); };
 function pass(k, i) [k, fake(k, i)];
 function ignore(k, i) [k, null];
@@ -27,6 +25,26 @@ local["http://(www|tw|es|de|)\.nicovideo\.jp\/watch/*"] = [
         ["c", function (ev, arg) { ext.exec("nicomment", arg); }],
         ["C", function (ev, arg) { ext.exec("nicommand", arg); }]
     ];
+// ========================= Recently closed tabs settings ========================== //
+plugins.options["site_local_keymap.local_keymap"] = local;
+ext.add("list-closed-tabs", function () {
+    const fav = "chrome://mozapps/skin/places/defaultFavicon.png";
+    var ss   = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
+    var json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
+    var closedTabs = [[tab.image || fav, tab.title] for each (tab in json.decode(ss.getClosedTabData(window)))];
+
+    if (!closedTabs.length)        
+        return void display.echoStatusBar("最近閉じたタブが見つかりませんでした", 2000);
+
+    prompt.selector(
+        {
+            message    : "select tab to undo:",
+            collection : closedTabs,
+            flags      : [ICON | IGNORE, 0],
+            callback   : function (i) { if (i >= 0) window.undoCloseTab(i); }
+        });
+}, "List closed tabs");
+// ========================= K2Emacs Settings  ========================== //
 key.setEditKey(["C-c", "e"], function (ev, arg) {
     ext.exec("edit_text", arg, ev);
 }, "外部エディタで編集", true);
@@ -55,7 +73,12 @@ plugins.options["tanything_opt.keymap"] = {
     "e"     : "localMovetoend",
     "p"     : "localTogglePin"
 };
-local["^https?://mail.google.com/mail/*"] = [
+// ========================= some sites want to key bindings ========================== //
+local["^http://www.youtube.com/watch*"] = [
+    ['SPC'   , null]
+];
+
+local["^https?://mail.google.com/mail/*",'https://www.evernote.com/*'] = [
     pass(['g', 'i'], 3),
     pass(['g', 's'], 3),
     pass(['g', 't'], 3),
@@ -108,7 +131,7 @@ local["^https?://mail.google.com/mail/*"] = [
     ['C-s', null],
     ['T', null]
 ];
-
+// ========================= Twitter Client Keys ========================== //
 plugins.options["twitter_client.keymap"] = {
     "C-z"   : "prompt-toggle-edit-mode",
     "SPC"   : "prompt-next-page",
@@ -192,8 +215,7 @@ hook.addToHook("LocationChange", function (aNsURI) {
 });
 
 key.blackList = [
-    'http://js2coffee.org/*',
-    'https://www.evernote.com/*'
+    'http://js2coffee.org/*'
 ];
 
 // ============================= Caret mode bindings ============================== //
@@ -235,6 +257,27 @@ key.setGlobalKey(["C-c", "q"], function (ev, arg) {
                  }, "readability", true);
 
 // ============================= Key bindings ============================== //
+key.setViewKey(['u', 'c'], function () {
+    ext.exec("list-closed-tabs");
+}, 'List closed tabs');
+
+key.setViewKey(['u', 't'], function () {
+    undoCloseTab();
+}, 'Undo closed tab');
+
+key.setGlobalKey(['C-c', 'b'], function (ev, arg) {
+    let elem = document.commandDispatcher.focusedElement;
+    if (elem) elem.blur();
+    gBrowser.focus();
+    _content.focus();
+}, 'コンテンツへフォーカス');
+ 
+key.setGlobalKey(['C-c', 'p'], function (ev, arg) {
+    var p = document.getElementById("keysnail-prompt");
+    if (p.hidden)
+        return;
+    document.getElementById("keysnail-prompt-textbox").focus();
+}, 'プロンプトへフォーカス');
 
 key.setGlobalKey(['C-c', 't'], function (ev, arg) {
     ext.exec("twitter-client-tweet", arg);

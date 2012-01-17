@@ -21,7 +21,9 @@ C-x t 最初のインプットエリアへ
 C-x s 最初のボタンへフォーカス
 C-x h すべて選択
 C-c q スタイルシートを読み込まない
-
+u c 閉じたタブを表示
+C-c b コンテンツにフォーカス
+C-c p プロンプトへフォーカス
 * caret mode
 ** switch caret <-> viewm mode
 default - f7
