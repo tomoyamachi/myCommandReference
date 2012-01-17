@@ -1,0 +1,67 @@
+* login ec2-server
+sudo ssh -i party-key.pem ec2-user@ec2-175-41-200-82.ap-northeast-1.compute.amazonaws.com
+sudo su -
+
+* もしもftpでファイルアップロードできなければ、
+** 1.オーナ/グループが違うせい
+chown -R owner_name:group_name directory/
+chown -R ec2-user:ec2-user directory/
+
+* httpd  -  sudo /etc/init.d/httpd restart
+
+* utf8
+/etc/my.cnfで設定。
+/usr/share/mysql/my-xxxx.cnfをコピーして、以下のテキストを追加。
+要再起動。
+: [client]
+: default-character-set=utf8 #追加
+: [mysqld]
+: default-character-set=utf8 #追加
+: character-set-server=utf8 #追加
+
+* service mysqld restart
+:  /etc/init.d/mysqld restart
+
+* mysql passwd 設定
+SET PASSWORD FOR root@localhost=PASSWORD('hoge');
+
+* mysqlのデータ表示
+- DB一覧の表示
+: show databases;
+- DBを使う
+: use dbname;
+- テーブルの表示
+:  show tables from dbname;
+:  show users from loc_development;
+
+- カラムの表示
+: show fields from [table] from [db];
+: show fields from users from loc_development;
+
+- テーブルのデータを表示(カラムを指定する場合)
+: select * from [db].[table] (where columnname);
+: select * from loc_development.users;
+
+* mysql dump
+** バックアップ
+すべて
+: mysqldump -u root -x --all-databases > dump.sql
+特定のデータベースのみ
+: mysqldump -u root データベース名 > dump.sql
+** sql 読み込み
+すべて
+: mysql -u root -p < dump.sql
+特定データベースのみ
+: mysql -u root データベース名 < dump.sql
+
+* migrate production env  -  rake db:migrate RAILS_ENV=production
+
+* aws database.ymlの書き換え
+: socket: /var/lib/mysql/mysql.sock
+に書き換え
+
+* install rvm
+     bash < <(curl -s https://rvm.beginrescueend.com/install/rvm)
+     source ~/.bash_profile
+     rvm | head -1
+
