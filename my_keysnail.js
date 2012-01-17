@@ -43,7 +43,30 @@ ext.add("list-closed-tabs", function () {
             flags      : [ICON | IGNORE, 0],
             callback   : function (i) { if (i >= 0) window.undoCloseTab(i); }
         });
-}, "List closed tabs");
+ }, "List closed tabs");
+// ========================= Caret mode Hint ===========================//
+
+plugins.options["caret_hint.head_key"] = "j";//c → j
+plugins.options["caret_hint.tail_key"] = "J";//C → J
+
+function readability (){
+    x=content.document.createElement("SCRIPT");
+    x.type="text/javascript";
+    x.src="http://brettterpstra.com/share/readability.js?x="+(Math.random());
+    content.document.getElementsByTagName("head")[0].appendChild(x);
+    y=content.document.createElement("LINK");
+    y.rel="stylesheet";
+    y.href="http://brettterpstra.com/share/readability.css?x="+(Math.random());
+    y.type="text/css";
+    y.media="screen";
+    content.document.getElementsByTagName("head")[0].appendChild(y);
+}
+
+ext.add("readability", readability,
+        M({ja: "readabilityスタート",
+           en: "start readability"}));
+
+
 // ========================= K2Emacs Settings  ========================== //
 key.setEditKey(["C-c", "e"], function (ev, arg) {
     ext.exec("edit_text", arg, ev);
@@ -77,7 +100,6 @@ plugins.options["tanything_opt.keymap"] = {
 local["^http://www.youtube.com/watch*"] = [
     ['SPC'   , null]
 ];
-
 local["^https?://mail.google.com/mail/*",'https://www.evernote.com/*'] = [
     pass(['g', 'i'], 3),
     pass(['g', 's'], 3),
@@ -163,6 +185,50 @@ plugins.options["twitter_client.keymap"] = {
 };
 
 plugins.options["twitter_client.lists"] = ["tomoyamachi/social-news","tomoyamachi/kai-10","tomoyamachi/program","tomoyamachi/omoshiro", "tomoyamachi/real"];
+
+//======================= LDRnail Settings==================================//
+plugins.options["ldrnail.keybind"] = {
+    'j': 'next',
+    'k': 'prev',
+    'p': 'pin',
+    'i': 'list',
+    'f': 'focus',
+    'v': 'view',
+    'o': 'open',
+    'n': 'siteinfo'
+};
+plugins.options["ldrnail.pinned_list_actions"] = [
+    [function(aIndex) {
+         if (aIndex < 0)
+             return;
+         let link = plugins.ldrnail.getItemLink(plugins.ldrnail.pinnedItems[aIndex]);
+         if (link)
+             openUILinkIn(link, 'tabshifted');
+     },
+     "Open link in background tab", "open,c"
+    ],
+    [function(aIndex) {
+         if (aIndex < 0)
+             return;
+         let elem = plugins.ldrnail.pinnedItems[aIndex];
+         if (elem)
+             elem.scrollIntoView(true);
+     },
+     "Scroll to this item", "scroll,c"
+    ]
+];
+plugins.options["ldrnail.pinned_list_keymap"] = {
+    "o": "open",
+    "g": "scroll"
+};
+plugins.options["ldrnail.pre_open_filter"] = function(aURL) {
+    (!/^https?:\/\/docs\.google\.com/.test(aURL) && /^[^?#]+\.pdf($|[#?])/i.test(aURL)) ?
+        'https://docs.google.com/viewer?url='+encodeURIComponent(aURL)+'&embedded=true&chrome=true' : aURL;
+};
+
+plugins.options["ldrnail.exclude_urls"] = [
+    "^http://www.nicovideo.jp/watch/.*"
+];
 //}}%PRESERVE%
 // ========================================================================= //
 
@@ -218,45 +284,8 @@ key.blackList = [
     'http://js2coffee.org/*'
 ];
 
-// ============================= Caret mode bindings ============================== //
-
-plugins.options["caret_hint.head_key"] = "j";//c → j
-plugins.options["caret_hint.tail_key"] = "J";//C → J
-
-key.setViewKey('i', function (ev, arg) {
-    nsPreferences.setBoolPref("accessibility.browsewithcaret", true);
-}, 'キャレットモード', true);
-
-key.setCaretKey('i', function (ev, arg) {
-    nsPreferences.setBoolPref("accessibility.browsewithcaret", false);
-}, 'キャレットモードを抜ける', true);
-
-key.setCaretKey('s', function (ev, arg) {
-    ext.exec("swap-caret", arg, ev);
-}, 'キャレットを交換', true);
-
-function readability (){
-    x=content.document.createElement("SCRIPT");
-    x.type="text/javascript";
-    x.src="http://brettterpstra.com/share/readability.js?x="+(Math.random());
-    content.document.getElementsByTagName("head")[0].appendChild(x);
-    y=content.document.createElement("LINK");
-    y.rel="stylesheet";
-    y.href="http://brettterpstra.com/share/readability.css?x="+(Math.random());
-    y.type="text/css";
-    y.media="screen";
-    content.document.getElementsByTagName("head")[0].appendChild(y);
-}
-
-ext.add("readability", readability,
-        M({ja: "readabilityスタート",
-           en: "start readability"}));
-
-key.setGlobalKey(["C-c", "q"], function (ev, arg) {
-                     ext.exec("readability", arg);
-                 }, "readability", true);
-
 // ============================= Key bindings ============================== //
+// 閉じたタブのリスト表示
 key.setViewKey(['u', 'c'], function () {
     ext.exec("list-closed-tabs");
 }, 'List closed tabs');
@@ -265,20 +294,29 @@ key.setViewKey(['u', 't'], function () {
     undoCloseTab();
 }, 'Undo closed tab');
 
+//プロンプトのトグル
+key.setGlobalKey(['C-c', 'q'], function (ev, arg) {
+    ext.exec("readability", arg);
+}, 'readability', true);
+
 key.setGlobalKey(['C-c', 'b'], function (ev, arg) {
-    let elem = document.commandDispatcher.focusedElement;
-    if (elem) elem.blur();
+    var elem = document.commandDispatcher.focusedElement;
+    if (elem) {
+        elem.blur();
+    }
     gBrowser.focus();
     _content.focus();
 }, 'コンテンツへフォーカス');
- 
+
 key.setGlobalKey(['C-c', 'p'], function (ev, arg) {
     var p = document.getElementById("keysnail-prompt");
-    if (p.hidden)
+    if (p.hidden) {
         return;
+    }
     document.getElementById("keysnail-prompt-textbox").focus();
 }, 'プロンプトへフォーカス');
 
+// twitter client
 key.setGlobalKey(['C-c', 't'], function (ev, arg) {
     ext.exec("twitter-client-tweet", arg);
 }, 'つぶやく', true);
@@ -287,6 +325,25 @@ key.setGlobalKey(['C-c', 'T'], function (ev, arg) {
     ext.exec("twitter-client-tweet-this-page", arg);
 }, 'このページのタイトルと URL を使ってつぶやく', true);
 
+key.setViewKey('t', function (ev, arg) {
+    ext.exec("twitter-client-display-timeline", arg);
+}, 'TL を表示', true);
+
+// LDRnails
+key.setViewKey(['r', 's'], function (ev, arg) {
+    ext.exec("ril-show-reading-list", arg);
+}, 'show ReadItLater', true);
+
+key.setViewKey(['r', 'r'], function (ev, arg) {
+    ext.exec("ril-toggle", arg);
+}, 'add current tab to ReadItLater', true);
+
+key.setViewKey(['r', 'c'], function (ev, arg) {
+    ext.exec("ril-append-and-close", arg);
+}, 'append current tab & close', true);
+
+
+//normal
 key.setGlobalKey(['C-c', 'u'], function (ev) {
     undoCloseTab();
 }, '閉じたタブを元に戻す');
@@ -395,9 +452,10 @@ key.setGlobalKey('C-M-h', function (ev) {
     getBrowser().mTabContainer.advanceSelectedTab(-1, true);
 }, 'ひとつ左のタブへ');
 
-key.setViewKey('t', function (ev, arg) {
-    ext.exec("twitter-client-display-timeline", arg);
-}, 'TL を表示', true);
+key.setViewKey('i', function (ev, arg) {
+    nsPreferences.setBoolPref("accessibility.browsewithcaret", true);
+}, 'キャレットモード', true);
+
 
 key.setViewKey([':', 'b'], function (ev, arg) {
     ext.exec("bmany-list-all-bookmarks", arg, ev);
@@ -519,9 +577,13 @@ key.setViewKey('M-n', function (ev) {
     command.walkInputElement(command.elementsRetrieverButton, false, true);
 }, '前のボタンへフォーカスを当てる');
 
-key.setEditKey('C-e', function (ev, arg) {
+key.setEditKey(['C-c', 'e'], function (ev, arg) {
     ext.exec("edit_text", arg, ev);
 }, '外部エディタで編集', true);
+
+key.setEditKey('C-e', function (ev) {
+    command.endLine(ev);
+}, '行末へ');
 
 key.setEditKey(['C-x', 'h'], function (ev) {
     command.selectAll(ev);
@@ -568,10 +630,6 @@ key.setEditKey('C-\\', function (ev) {
 key.setEditKey('C-a', function (ev) {
     command.beginLine(ev);
 }, '行頭へ移動');
-
-key.setEditKey('C-e', function (ev) {
-    command.endLine(ev);
-}, '行末へ');
 
 key.setEditKey('C-f', function (ev) {
     command.nextChar(ev);
@@ -671,6 +729,14 @@ key.setEditKey('M-n', function (ev) {
 key.setEditKey('M-p', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, false, true);
 }, '前のテキストエリアへフォーカス');
+
+key.setCaretKey('i', function (ev, arg) {
+    nsPreferences.setBoolPref("accessibility.browsewithcaret", false);
+}, 'キャレットモードを抜ける', true);
+
+key.setCaretKey('s', function (ev, arg) {
+    ext.exec("swap-caret", arg, ev);
+}, 'キャレットを交換', true);
 
 key.setCaretKey([['C-a'], ['^']], function (ev) {
     ev.target.ksMarked ? goDoCommand("cmd_selectBeginLine") : goDoCommand("cmd_beginLine");
