@@ -3,7 +3,7 @@ K2Emacs.ks.js
 firebug.ks.js
 Tanything.ks.js
 hateb-keysnail-collabo.ks.js
-_dark-theme.ks.js
+dark-theme.ks.js
 hok.ks.js
 bmany.ks.js
 nicontroller.ks.js
@@ -13,7 +13,8 @@ div_scroller.ks.js
 site-local-keymap.ks.js
 dlbsnail.ks.js
 yet-another-twitter-client-keysnail.ks.js
-
+RILnails
+LDRnails
 * Global Key
 C-M-r 設定ファイルを再読込み
 C-x g 検索バーへカーソル
@@ -25,9 +26,8 @@ u c 閉じたタブを表示
 C-c b コンテンツにフォーカス
 C-c p プロンプトへフォーカス
 * caret mode
-** switch caret <-> viewm mode
+** switch caret <-> view mode
 default - f7
-
 * view mode
 f    最初のインプットエリアへ
 M-p  次のボタンへ
@@ -40,10 +40,14 @@ C-M-y  クリップボードから選択して貼り付け
 
 M-p    次のテキストエリアへ
 M-n    前のテキストエリアへ
+
 * HoK
 c   右クリックメニューを表示
 j    指定した要素を選択しながらキャレットモードに変更
 i   画像を開く
+g   firebugで要素を調査
+G   firebugで要素までのxpathを調査
+: c firebug を閉じる
 
 * Tweet
 t c ツイートをコビー
@@ -57,3 +61,30 @@ w p：今開いてるタブより左側にあるタブを全て閉じる
 w n：今開いてるタブより右側にあるタブを全て閉じる
 w M-a：今開いてるタブ以外を全て閉じる
 w c：選択したタブのタイトルとURLをHTMLタグつきでコピー
+* close tab list
+u c
+* RIL Read it Later
+r r  :ril-toggle - Append or remove current tab
+r c  :ril-append-and-close - Append current tab and close
+r s  :ril-show-reading-list - Show reading list
+** in reading list
+    "C-z"   : "prompt-toggle-edit-mode",
+    "j"     : "prompt-next-completion",
+    "k"     : "prompt-previous-completion",
+    "g"     : "prompt-beginning-of-candidates",
+    "G"     : "prompt-end-of-candidates",
+    "D"     : "prompt-cancel",
+    // RILnail specific actions
+    "o"     : "open,c",
+    "O"     : "open-background,c",
+    "d"     : "delete"
+* LDRnails
+j  next 次へ移動
+k  perv  前へ移動
+p  pin  カレントのピンをトグル
+i  list  ピンリストを表示
+f  focus  テキストボックスへフォーカス
+v  view  カレントを現在のタブで表示
+o  open  ピンもしくはカレントを背面のタブで表示
+s  siteinfo  Siteinfo を切り替える
+g  ピンリストで選択中のアイテム位置までスクロールする
